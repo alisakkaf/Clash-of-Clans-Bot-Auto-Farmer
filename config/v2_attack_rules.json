@@ -1,0 +1,77 @@
+{
+  "_comment": "Global tunables for the V2 CSR attack system. Hot-reloadable.",
+  "stand_off_px": 80,
+  "tap_jitter_px": 12,
+  "obstacle_color_std_threshold": 30,
+  "obstacle_search_radius_px": 15,
+  "min_corridor_width_px": 60,
+  "zoom_target_red_ratio": [0.40, 0.65],
+  "polygon": {
+    "approx_eps_px": 2.0,
+    "min_polygon_area_ratio": 0.10,
+    "max_polygon_area_ratio": 0.90,
+    "min_polygon_y_px": 60,
+    "min_polygon_width_px": 500,
+    "top_ui_exclude_px": 150,
+    "left_ui_exclude_px": 0,
+    "right_ui_exclude_px": 0,
+    "bottom_ui_exclude_px": 0,
+    "hsv_s_min": 150,
+    "hsv_v_min": 110,
+    "use_inversion_fallback": true,
+    "fuse_top_k": 5,
+    "debug_dump": "",
+    "morph_close_h_kernel": [35, 3],
+    "morph_close_v_kernel": [3, 35],
+    "morph_close_square": [9, 9]
+  },
+  "isometric": {
+    "tile_w_px_default": 32,
+    "tile_h_px_default": 16,
+    "auto_calibrate": true
+  },
+  "deploy_pattern": {
+    "tap_hold_min_ms": 60,
+    "tap_hold_max_ms": 110,
+    "long_press_ms": 2500,
+    "quick_swipe_ms": 350,
+    "inter_action_min_ms": 150,
+    "inter_action_max_ms": 400,
+    "pre_select_settle_ms": 180,
+    "post_deploy_settle_ms": 300
+  },
+  "hero_ability": {
+    "trigger_after_engagement_sec": 4.0,
+    "double_tap_gap_ms": 120
+  },
+  "funnel": {
+    "outer_drop_pct": [0.20, 0.80],
+    "main_drop_pct": 0.50,
+    "delay_between_funnels_sec": 1.5,
+    "delay_before_main_wave_sec": 2.0
+  },
+  "spell_path_fractions": {
+    "rage": 0.65,
+    "heal": 0.35,
+    "freeze": "on_inferno_or_eagle",
+    "lightning": "on_strongest_air_defense",
+    "jump": "on_wall_in_path",
+    "earthquake": "on_wall_in_path",
+    "haste": 0.55,
+    "skeleton": 0.45,
+    "bat": "behind_main_cluster"
+  },
+  "obstacle_templates": [
+    "rock_obstacle",
+    "tree_obstacle",
+    "bush_obstacle",
+    "deco_obstacle"
+  ],
+  "rule_priorities": [
+    "resource_raid",
+    "th_snipe",
+    "air_attack",
+    "ground_funnel",
+    "smart_default"
+  ]
+}
