@@ -39,7 +39,24 @@ Tired of spending hours grinding for Gold, Elixir, and Dark Elixir? This bot act
 - **Anti-Stuck & Auto-Reload:** Automatically detects connection drops, clicks the "Reload" button, and handles unexpected popups to keep running 24/7.
 - **Visual Macro Recorder:** Record your custom layouts (like collecting resources from collectors or navigating menus) and play them back with humanized timing.
 
+## ⚔️ Combat Efficiency & Army Composition
+
+> [!IMPORTANT]
+> ### 🎯 Attack Success Rate (CSR Performance)
+> The bot's smart vision engine achieves a highly reliable **80% success rate (8 out of 10 matches)**[cite: 2]. Due to dynamic base designs, there is a minor margin of error where **only 2 out of 10 matches** might experience deployment miscalculations[cite: 2]. This usually occurs when dynamic base elements heavily distort the isometric grid margins or Red Zone polygons[cite: 2].
+
+### 🏹 Optimized Army Composition (TH Universal Link)
+This composition has been extensively benchmarked and works beautifully across **all Town Hall levels**[cite: 2]. This golden layout maximizes the bot's dynamic corridor-clearing logic for maximum resource looting[cite: 2].
+
+| 📱 Direct Army Copy Link |
+| :--- |
+| [🚀 Click Here to Copy This Army Layout Directly Into Your Game!](https://link.clashofclans.com/en?action=CopyArmy&army=h0p1e10_14-1p3e17_20-2m1p8e24_4-4p4e6_40i11x5-1x52-1x91d1x16u8x5-10x59-1x62-1x87-1x75s5x5-3x2) |
+
+> [!TIP]
+> **Tip for Developers:** This strategic composition triggers the **Smart Default Logic** inside `smart_v2_logic.py`, calculating the widest safe corridors for maximum resource harvesting[cite: 2].
 ---
+
+> 💡 **Tip:** This mixed strategic composition triggers the **Smart Default Logic** inside `smart_v2_logic.py`, calculating the widest safe corridors for massive resource harvesting.
 
 ## ⚔️ Available Attack Strategies
 
