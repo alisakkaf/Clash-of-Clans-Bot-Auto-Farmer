@@ -1,0 +1,5 @@
+.backup/
+.windsurf/
+github_upload_instructions.md
+__pycache__/
+profiles/settings.json
