@@ -1,0 +1,78 @@
+{
+    "name": "Example Full Deploy",
+    "description": "Deploys all troops in a line along the bottom edge every 0.3s",
+    "steps": [
+        {
+            "time": 0.0,
+            "x": 300,
+            "y": 950,
+            "action": "tap"
+        },
+        {
+            "time": 0.3,
+            "x": 450,
+            "y": 940,
+            "action": "tap"
+        },
+        {
+            "time": 0.6,
+            "x": 600,
+            "y": 935,
+            "action": "tap"
+        },
+        {
+            "time": 0.9,
+            "x": 750,
+            "y": 930,
+            "action": "tap"
+        },
+        {
+            "time": 1.2,
+            "x": 900,
+            "y": 925,
+            "action": "tap"
+        },
+        {
+            "time": 1.5,
+            "x": 1050,
+            "y": 920,
+            "action": "tap"
+        },
+        {
+            "time": 1.8,
+            "x": 1200,
+            "y": 920,
+            "action": "tap"
+        },
+        {
+            "time": 2.1,
+            "x": 1350,
+            "y": 925,
+            "action": "tap"
+        },
+        {
+            "time": 2.4,
+            "x": 1500,
+            "y": 930,
+            "action": "tap"
+        },
+        {
+            "time": 2.7,
+            "x": 1650,
+            "y": 935,
+            "action": "tap"
+        },
+        {
+            "time": 3.0,
+            "x": 1800,
+            "y": 940,
+            "action": "tap"
+        },
+        {
+            "time": 3.3,
+            "x": 1950,
+            "y": 945,
+            "action": "tap"
+        }
+    ]
+}
