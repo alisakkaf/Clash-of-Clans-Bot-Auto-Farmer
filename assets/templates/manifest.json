@@ -1,0 +1,295 @@
+{
+  "normal_mode_btn": {
+    "category": "ui_elements",
+    "label": "Normal Mode Btn",
+    "file": "assets\\templates\\ui_elements\\normal_mode_btn.png",
+    "width": 333,
+    "height": 51
+  },
+  "next_button": {
+    "category": "ui_elements",
+    "file": "assets\\templates\\ui_elements\\next_button.png",
+    "width": 360,
+    "height": 192
+  },
+  "loading_screen": {
+    "category": "ui_elements",
+    "label": "Loading Screen",
+    "file": "assets\\templates\\ui_elements\\loading_screen.png",
+    "width": 195,
+    "height": 147
+  },
+  "attack_button2": {
+    "category": "ui_elements",
+    "label": "Attack Button2",
+    "file": "assets\\templates\\ui_elements\\attack_button2.png",
+    "width": 391,
+    "height": 129
+  },
+  "connection_error": {
+    "category": "ui_elements",
+    "label": "Connection Error",
+    "file": "assets\\templates\\ui_elements\\connection_error.png",
+    "width": 351,
+    "height": 102
+  },
+  "attack_button": {
+    "category": "ui_elements",
+    "label": "Attack Button",
+    "file": "assets\\templates\\ui_elements\\attack_button.png",
+    "width": 186,
+    "height": 57
+  },
+  "end_battle_button": {
+    "category": "ui_elements",
+    "label": "End Battle Button",
+    "file": "assets\\templates\\ui_elements\\end_battle_button.png",
+    "width": 207,
+    "height": 54
+  },
+  "end_battle_confirm": {
+    "category": "ui_elements",
+    "label": "End Battle Confirm",
+    "file": "assets\\templates\\ui_elements\\end_battle_confirm.png",
+    "width": 412,
+    "height": 210
+  },
+  "return_home": {
+    "category": "ui_elements",
+    "label": "Return Home",
+    "file": "assets\\templates\\ui_elements\\return_home.png",
+    "width": 279,
+    "height": 123
+  },
+  "confirm_button": {
+    "category": "ui_elements",
+    "label": "Confirm Button",
+    "file": "assets\\templates\\ui_elements\\confirm_button.png",
+    "width": 318,
+    "height": 144
+  },
+  "archer_queen": {
+    "category": "heroes",
+    "label": "Archer Queen",
+    "file": "assets\\templates\\heroes\\archer_queen.png",
+    "width": 164,
+    "height": 225
+  },
+  "town_hall": {
+    "category": "buildings",
+    "label": "Town Hall",
+    "file": "assets\\templates\\buildings\\town_hall.png",
+    "width": 266,
+    "height": 300
+  },
+  "totem_spell": {
+    "category": "spells",
+    "label": "Totem Spell",
+    "file": "assets\\templates\\spells\\totem_spell.png",
+    "width": 166,
+    "height": 160
+  },
+  "rage_spell": {
+    "category": "spells",
+    "label": "Rage Spell",
+    "file": "assets\\templates\\spells\\rage_spell.png",
+    "width": 166,
+    "height": 166
+  },
+  "freeze_spell": {
+    "category": "spells",
+    "label": "Freeze Spell",
+    "file": "assets\\templates\\spells\\freeze_spell.png",
+    "width": 166,
+    "height": 166
+  },
+  "electro_dragon": {
+    "category": "troops",
+    "label": "Electro Dragon",
+    "file": "assets\\templates\\troops\\electro_dragon.png",
+    "width": 166,
+    "height": 166
+  },
+  "lot_asseset": {
+    "category": "ui_elements",
+    "label": "Lot Asseset",
+    "file": "assets\\templates\\ui_elements\\lot_asseset.png",
+    "width": 276,
+    "height": 216
+  },
+  "timer_top_start": {
+    "category": "ui_elements",
+    "label": "Timer Top Start",
+    "file": "assets\\templates\\ui_elements\\timer_top_start.png",
+    "width": 252,
+    "height": 108
+  },
+  "troops_bar": {
+    "category": "ui_elements",
+    "label": "Troops Bar",
+    "file": "assets\\templates\\ui_elements\\troops_bar.png",
+    "width": 2330,
+    "height": 418
+  },
+  "reload_button": {
+    "category": "ui_elements",
+    "label": "Reload Button",
+    "file": "assets\\templates\\ui_elements\\reload_button.png",
+    "width": 583,
+    "height": 129
+  },
+  "town_hall_18": {
+    "category": "buildings",
+    "label": "Town Hall 18",
+    "file": "assets\\templates\\buildings\\town_hall_18.png",
+    "width": 300,
+    "height": 265
+  },
+  "balloon": {
+    "category": "troops",
+    "label": "Balloon",
+    "file": "assets\\templates\\troops\\balloon.png",
+    "width": 166,
+    "height": 166
+  },
+  "barbarian_king": {
+    "category": "heroes",
+    "label": "Barbarian King",
+    "file": "assets\\templates\\heroes\\barbarian_king.png",
+    "width": 166,
+    "height": 225
+  },
+  "grand_warden": {
+    "category": "heroes",
+    "label": "Grand Warden",
+    "file": "assets\\templates\\heroes\\grand_warden.png",
+    "width": 166,
+    "height": 220
+  },
+  "dragon_duke": {
+    "category": "heroes",
+    "label": "Dragon Duke",
+    "file": "assets\\templates\\heroes\\dragon_duke.png",
+    "width": 166,
+    "height": 215
+  },
+  "copter_bb": {
+    "category": "heroes",
+    "label": "Copter Bb",
+    "file": "assets\\templates\\heroes\\copter_bb.png",
+    "width": 166,
+    "height": 166
+  },
+  "giant_bb": {
+    "category": "troops",
+    "label": "Giant Bb",
+    "file": "assets\\templates\\troops\\giant_bb.png",
+    "width": 166,
+    "height": 166
+  },
+  "bb_find_match": {
+    "category": "builder_base",
+    "label": "Bb Find Match",
+    "file": "assets\\templates\\builder_base\\bb_find_match.png",
+    "width": 192,
+    "height": 129
+  },
+  "bb_battle_hud": {
+    "category": "builder_base",
+    "label": "Bb Battle Hud",
+    "file": "assets\\templates\\builder_base\\bb_battle_hud.png",
+    "width": 336,
+    "height": 120
+  },
+  "bb_return_home": {
+    "category": "builder_base",
+    "label": "Bb Return Home",
+    "file": "assets\\templates\\builder_base\\bb_return_home.png",
+    "width": 246,
+    "height": 126
+  },
+  "battle_machine_bb": {
+    "category": "heroes",
+    "label": "Battle Machine Bb",
+    "file": "assets\\templates\\heroes\\battle_machine_bb.png",
+    "width": 166,
+    "height": 165
+  },
+  "bomber_bb": {
+    "category": "troops",
+    "label": "Bomber Bb",
+    "file": "assets\\templates\\troops\\bomber_bb.png",
+    "width": 166,
+    "height": 166
+  },
+  "witch_bb": {
+    "category": "troops",
+    "label": "Witch Bb",
+    "file": "assets\\templates\\troops\\witch_bb.png",
+    "width": 166,
+    "height": 166
+  },
+  "bb_attack_confirm": {
+    "category": "builder_base",
+    "label": "Bb Attack Confirm",
+    "file": "assets\\templates\\builder_base\\bb_attack_confirm.png",
+    "width": 433,
+    "height": 177
+  },
+  "bb_prep_text": {
+    "category": "builder_base",
+    "label": "Bb Prep Text",
+    "file": "assets\\templates\\builder_base\\bb_prep_text.png",
+    "width": 225,
+    "height": 39
+  },
+  "bb_active_text": {
+    "category": "builder_base",
+    "label": "Bb Active Text",
+    "file": "assets\\templates\\builder_base\\bb_active_text.png",
+    "width": 190,
+    "height": 35
+  },
+  "bb_troop_slot": {
+    "category": "builder_base",
+    "label": "Bb Troop Slot",
+    "file": "assets\\templates\\builder_base\\bb_troop_slot.png",
+    "width": 2327,
+    "height": 213
+  },
+  "peka_bb": {
+    "category": "troops",
+    "label": "Peka Bb",
+    "file": "assets\\templates\\troops\\peka_bb.png",
+    "width": 166,
+    "height": 159
+  },
+  "royal_champion": {
+    "category": "heroes",
+    "label": "Royal Champion",
+    "file": "assets\\templates\\heroes\\royal_champion.png",
+    "width": 166,
+    "height": 217
+  },
+  "ranked_mode_btn": {
+    "category": "ui_elements",
+    "label": "Ranked Mode Btn",
+    "file": "assets\\templates\\ui_elements\\ranked_mode_btn.png",
+    "width": 442,
+    "height": 159
+  },
+  "surrender_button": {
+    "category": "ui_elements",
+    "label": "Surrender Button",
+    "file": "assets\\templates\\ui_elements\\surrender_button.png",
+    "width": 219,
+    "height": 75
+  },
+  "super_witch": {
+    "category": "troops",
+    "label": "Super Witch",
+    "file": "assets\\templates\\troops\\super_witch.png",
+    "width": 300,
+    "height": 300
+  }
+}
