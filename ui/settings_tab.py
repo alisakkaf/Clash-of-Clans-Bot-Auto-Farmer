@@ -14,7 +14,7 @@ from PyQt5.QtCore import Qt, pyqtSignal
 
 from core.settings import Settings, PRESETS
 
-_PRESET_ORDER = ["ultra", "high", "medium", "low"]
+_PRESET_ORDER = ["ultra", "high", "medium", "low", "smart_default"]
 
 
 class SettingsTab(QWidget):

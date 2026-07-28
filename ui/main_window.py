@@ -186,7 +186,14 @@ class MainWindow(QMainWindow):
         preset = s.get("preset", "medium")
         tick = s.get("tick_interval", 1.0)
         label = PRESETS.get(preset, {}).get("label", preset.upper())
-        self._preset_pill.setText(f"  {label}  •  tick={tick:.1f}s  ")
+        try:
+            from core.adb_handler import get_active_resolution, get_aspect_ratio, is_tablet_device
+            w, h = get_active_resolution()
+            asp = get_aspect_ratio()
+            dev_type = "📱 Tablet" if is_tablet_device() else "📱 Phone/Emu"
+            self._preset_pill.setText(f"  {label}  •  {dev_type} ({w}x{h}, {asp} ratio)  •  tick={tick:.1f}s  ")
+        except Exception:
+            self._preset_pill.setText(f"  {label}  •  tick={tick:.1f}s  ")
 
     # ═════════════════════════════════════════════════════════════════════
     #  Asset bus — single signal that refreshes ALL tabs
@@ -270,6 +277,13 @@ class MainWindow(QMainWindow):
             self.statusBar().showMessage("Bot did NOT start — game not installed.")
             return
 
+        try:
+            from core.adb_handler import get_resolution
+            get_resolution()
+        except Exception:
+            pass
+        self._update_preset_pill()
+
         self._start_act.setEnabled(False)
         self._stop_act.setEnabled(True)
         self._adb_label.setText("● ADB: Running")
@@ -303,13 +317,13 @@ class MainWindow(QMainWindow):
     #  Interactive Assist — "Help Me" Dialog
     # ═══════════════════════════════════════════════════════════════════
 
-    def _on_help_needed(self, screenshot) -> None:
+    def _on_help_needed(self, screenshot, reason: str = "") -> None:
         """Called on the main thread via signal. Shows the assist dialog."""
         self.statusBar().showMessage("⚠  Bot PAUSED — needs your help!")
         self._adb_label.setText("● PAUSED")
         self._adb_label.setStyleSheet("color: #e94560; font-weight: bold; padding: 0 12px;")
 
-        dlg = InteractiveAssistDialog(screenshot, self)
+        dlg = InteractiveAssistDialog(screenshot, self, reason=reason)
         dlg.exec_()
         action, data = dlg.get_result()
 

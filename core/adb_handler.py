@@ -48,8 +48,40 @@ TAP_HOLD_MAX_MS = 120
 # Hide subprocess console windows on Windows.
 _SUBPROCESS_FLAGS = subprocess.CREATE_NO_WINDOW if sys.platform == "win32" else 0
 
+# Dynamic active resolution state (Landscape normalized)
+_active_screen_width: int = DEFAULT_SCREEN_WIDTH
+_active_screen_height: int = DEFAULT_SCREEN_HEIGHT
+_active_screen_density: int = 320
+
 _last_tap_x: int | None = None
 _last_tap_y: int | None = None
+
+
+def set_active_resolution(width: int, height: int) -> None:
+    """Set landscape-normalized active resolution."""
+    global _active_screen_width, _active_screen_height
+    w = max(width, height)
+    h = min(width, height)
+    _active_screen_width = max(320, w)
+    _active_screen_height = max(240, h)
+    log.info("ADB Active Resolution set to %dx%d (Aspect Ratio: %.2f)",
+             _active_screen_width, _active_screen_height, get_aspect_ratio())
+
+
+def get_active_resolution() -> tuple[int, int]:
+    """Return currently cached active landscape resolution (width, height)."""
+    return _active_screen_width, _active_screen_height
+
+
+def get_aspect_ratio() -> float:
+    """Return width / height aspect ratio (e.g. 1.78 for 16:9, 1.33 for 4:3, 2.16 for 20:9)."""
+    w, h = get_active_resolution()
+    return round(w / float(h), 3) if h > 0 else 1.778
+
+
+def is_tablet_device() -> bool:
+    """Return True if device aspect ratio is typical of tablets (<= 1.6, e.g. 4:3 or 16:10)."""
+    return get_aspect_ratio() <= 1.62
 
 
 def _jitter_bounds() -> tuple[int, int]:
@@ -95,20 +127,21 @@ def _run_raw(args: list[str], timeout: int = 15) -> bytes:
 
 def _humanize_coord(x: int, y: int) -> tuple[int, int]:
     global _last_tap_x, _last_tap_y
+    cur_w, cur_h = get_active_resolution()
     j_min, j_max = _jitter_bounds()
     if j_max == 0:
         _last_tap_x, _last_tap_y = x, y
-        return x, y
+        return max(0, min(x, cur_w - 1)), max(0, min(y, cur_h - 1))
     for _ in range(20):
         jx = random.choice([-1, 1]) * random.randint(j_min, j_max)
         jy = random.choice([-1, 1]) * random.randint(j_min, j_max)
-        hx = max(0, min(x + jx, DEFAULT_SCREEN_WIDTH - 1))
-        hy = max(0, min(y + jy, DEFAULT_SCREEN_HEIGHT - 1))
+        hx = max(0, min(x + jx, cur_w - 1))
+        hy = max(0, min(y + jy, cur_h - 1))
         if hx != _last_tap_x or hy != _last_tap_y:
             _last_tap_x, _last_tap_y = hx, hy
             return hx, hy
-    hx = max(0, min(x + random.randint(j_min, j_max), DEFAULT_SCREEN_WIDTH - 1))
-    hy = max(0, min(y + random.randint(j_min, j_max), DEFAULT_SCREEN_HEIGHT - 1))
+    hx = max(0, min(x + random.randint(j_min, j_max), cur_w - 1))
+    hy = max(0, min(y + random.randint(j_min, j_max), cur_h - 1))
     _last_tap_x, _last_tap_y = hx, hy
     return hx, hy
 
@@ -126,13 +159,22 @@ def _random_hold_ms() -> int:
 #  Public API — Core ADB
 # ═══════════════════════════════════════════════════════════════════════
 
+_last_connected_state: bool | None = None
+
+
 def check_connection() -> bool:
+    global _last_connected_state
     try:
         result = _run(["devices"], timeout=5)
         output = result.stdout.decode("utf-8", errors="ignore")
         lines = [ln for ln in output.strip().splitlines() if "\tdevice" in ln]
         connected = len(lines) > 0
-        log.info("ADB: %s", "CONNECTED" if connected else "NO DEVICE")
+        if connected != _last_connected_state:
+            _last_connected_state = connected
+            log.info("ADB: %s", "CONNECTED" if connected else "NO DEVICE")
+            if connected:
+                get_resolution()
+                get_screen_density()
         return connected
     except Exception:
         return False
@@ -143,9 +185,26 @@ def get_resolution() -> tuple[int, int]:
         raw = _run_raw(["shell", "wm", "size"], timeout=5)
         text = raw.decode("utf-8", errors="ignore").strip()
         parts = text.split(":")[-1].strip().split("x")
-        return int(parts[0]), int(parts[1])
+        w, h = int(parts[0]), int(parts[1])
+        set_active_resolution(w, h)
+        return get_active_resolution()
     except Exception:
-        return DEFAULT_SCREEN_WIDTH, DEFAULT_SCREEN_HEIGHT
+        return get_active_resolution()
+
+
+def get_screen_density() -> int:
+    global _active_screen_density
+    try:
+        raw = _run_raw(["shell", "wm", "density"], timeout=5)
+        text = raw.decode("utf-8", errors="ignore").strip()
+        parts = text.split(":")[-1].strip()
+        val = int(re.sub(r"\D", "", parts))
+        if val > 0:
+            _active_screen_density = val
+            log.info("ADB Screen Density: %d dpi", val)
+        return _active_screen_density
+    except Exception:
+        return _active_screen_density
 
 
 def screencap() -> np.ndarray | None:
@@ -153,9 +212,16 @@ def screencap() -> np.ndarray | None:
         raw = _run_raw(["shell", "screencap", "-p"], timeout=10)
         raw = raw.replace(b"\r\n", b"\n")
         img_array = np.frombuffer(raw, dtype=np.uint8)
+        if img_array.size == 0:
+            log.warning("screencap returned empty buffer, device might be disconnected.")
+            return None
         img = cv2.imdecode(img_array, cv2.IMREAD_COLOR)
         if img is None:
             log.error("screencap decode failed.")
+        else:
+            h, w = img.shape[:2]
+            if (w, h) != get_active_resolution():
+                set_active_resolution(w, h)
         return img
     except Exception as exc:
         log.error("screencap failed: %s", exc)
@@ -185,14 +251,15 @@ def swipe(x1: int, y1: int, x2: int, y2: int, duration_ms: int | None = None) ->
     """Humanized swipe. If duration_ms is None, reads Settings.swipe_duration."""
     if duration_ms is None:
         duration_ms = int(Settings().get("swipe_duration", 2500))
+    cur_w, cur_h = get_active_resolution()
     sx = x1 + random.choice([-1, 1]) * random.randint(SWIPE_JITTER_MIN, SWIPE_JITTER_MAX)
     sy = y1 + random.choice([-1, 1]) * random.randint(SWIPE_JITTER_MIN, SWIPE_JITTER_MAX)
     ex = x2 + random.choice([-1, 1]) * random.randint(SWIPE_JITTER_MIN, SWIPE_JITTER_MAX)
     ey = y2 + random.choice([-1, 1]) * random.randint(SWIPE_JITTER_MIN, SWIPE_JITTER_MAX)
-    sx = max(0, min(sx, DEFAULT_SCREEN_WIDTH - 1))
-    sy = max(0, min(sy, DEFAULT_SCREEN_HEIGHT - 1))
-    ex = max(0, min(ex, DEFAULT_SCREEN_WIDTH - 1))
-    ey = max(0, min(ey, DEFAULT_SCREEN_HEIGHT - 1))
+    sx = max(0, min(sx, cur_w - 1))
+    sy = max(0, min(sy, cur_h - 1))
+    ex = max(0, min(ex, cur_w - 1))
+    ey = max(0, min(ey, cur_h - 1))
     dur = int(duration_ms * random.uniform(0.85, 1.15))
     _run(["shell", "input", "swipe", str(sx), str(sy), str(ex), str(ey), str(dur)])
     _human_delay()
@@ -260,17 +327,11 @@ def is_app_installed(package: str, timeout: int = 6) -> bool:
         log.warning("pm path failed for %s: %s", package, exc)
         return False
     text = result.stdout.decode("utf-8", errors="ignore").strip()
-    return text.startswith("package:")
+    return "package:" in text
 
 
 def launch_app(package: str, timeout: int = 8) -> bool:
-    """Launch ``package`` via the standard ``monkey`` launcher intent.
-
-    The ``monkey`` approach is more universal than ``am start`` because
-    it does not require knowing the launchable activity name — it asks
-    Android to resolve the LAUNCHER intent for the given package.
-    Returns True if monkey reported one event sent.
-    """
+    """Launch ``package`` via monkey launcher intent or am start fallback."""
     if not package:
         return False
     try:
@@ -283,17 +344,21 @@ def launch_app(package: str, timeout: int = 8) -> bool:
             ],
             timeout=timeout,
         )
+        text = result.stdout.decode("utf-8", errors="ignore")
+        ok = "Events injected: 1" in text or "events injected: 1" in text.lower()
+        if ok:
+            log.info("Launched app via monkey: %s", package)
+            return True
     except Exception as exc:
         log.warning("monkey launch failed for %s: %s", package, exc)
+
+    try:
+        log.info("Attempting fallback launcher via am start for %s...", package)
+        _run(["shell", "am", "start", "-n", f"{package}/com.supercell.clashofclans.GameApp"], timeout=timeout)
+        return True
+    except Exception as exc2:
+        log.warning("am start fallback failed for %s: %s", package, exc2)
         return False
-    text = result.stdout.decode("utf-8", errors="ignore")
-    ok = "Events injected: 1" in text or "events injected: 1" in text.lower()
-    if ok:
-        log.info("Launched app: %s", package)
-    else:
-        log.warning("monkey did not confirm launch for %s — output: %s",
-                    package, text.strip()[:200])
-    return ok
 
 
 def is_game_running(package: str) -> bool:

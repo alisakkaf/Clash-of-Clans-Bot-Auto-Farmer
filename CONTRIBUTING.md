@@ -1,6 +1,6 @@
-# Contributing to ClashOfClans-CV-Automation
+# Contributing to Clash-of-Clans-Bot-Auto-Farmer
 
-Thank you for your interest in improving the **ClashOfClans-CV-Automation** framework! Contributions are welcome, whether they are bug fixes, feature enhancements, documentation updates, or template assets additions.
+Thank you for your interest in improving the **Clash-of-Clans-Bot-Auto-Farmer** framework! Contributions are welcome, whether they are bug fixes, feature enhancements, documentation updates, or template asset additions.
 
 Please read through the guidelines below before submitting a pull request.
 
@@ -12,8 +12,8 @@ We encourage a collaborative, respectful, and educational environment. Be suppor
 ## 2. Setting Up the Development Environment
 1. Fork the repository and clone your fork locally:
    ```bash
-   git clone https://github.com/YourUsername/ClashOfClans-CV-Automation.git
-   cd ClashOfClans-CV-Automation
+   git clone https://github.com/YourUsername/Clash-of-Clans-Bot-Auto-Farmer.git
+   cd Clash-of-Clans-Bot-Auto-Farmer
    ```
 2. Set up a Python virtual environment:
    ```bash
@@ -24,7 +24,7 @@ We encourage a collaborative, respectful, and educational environment. Be suppor
    ```bash
    pip install -r requirements.txt
    ```
-4. Set up an emulator with a **1920x1080 resolution** and enable ADB connection.
+4. Connect your device or emulator (supports all resolutions, tablets, and phones) and enable ADB connection.
 
 ## 3. Contribution Workflow
 1. **Create a branch** for your work:
@@ -34,14 +34,13 @@ We encourage a collaborative, respectful, and educational environment. Be suppor
 2. **Implement changes:**
    - Keep your code clean, documented, and conform to PEP 8 standards.
    - Maintain the singleton pattern for `Settings` and class architectures.
-   - Ensure the anti-ban humanization constraints (coordinate jittering and reaction delays) are respected in any new input actions.
+   - Ensure anti-detection humanization constraints (coordinate jittering and reaction delays) are respected in any new input actions.
 3. **Local Testing:**
-   - Run the bot on different emulator configurations to verify compatibility.
-   - Ensure no regressions were introduced to the legacy V36 fallback routines.
+   - Run the bot on different device configurations (tablets, smartphones, emulators) to verify multi-device resolution compatibility.
 4. **Commit your changes:**
    - Write clear, descriptive commit messages:
      ```bash
-     git commit -m "vision: add scale auto-calibration to isometric grid"
+     git commit -m "vision: add multi-scale auto-calibration to isometric grid"
      ```
 5. **Push and Open a Pull Request:**
    - Push your branch to your GitHub fork and open a Pull Request against our `main` branch.

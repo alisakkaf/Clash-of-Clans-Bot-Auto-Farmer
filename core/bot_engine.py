@@ -56,7 +56,7 @@ class BotEngine(QThread):
     battle_status      = pyqtSignal(str)
     error_occurred     = pyqtSignal(str)
     bot_stopped        = pyqtSignal()
-    help_needed        = pyqtSignal(object)          # np.ndarray screenshot
+    help_needed        = pyqtSignal(object, str)     # (screenshot, reason)
     game_not_installed = pyqtSignal(str)             # package name
     briefing_needed    = pyqtSignal(str)             # multi-line message
 
@@ -268,7 +268,8 @@ class BotEngine(QThread):
                 )
                 self._help_already_requested = True
                 self.pause()
-                self.help_needed.emit(screenshot)
+                reason_msg = f"Stuck in '{detected.name}' state for {elapsed:.0f}s. Expected HOME buttons (attack_button / shop_button) or confirmation UI."
+                self.help_needed.emit(screenshot, reason_msg)
                 return
 
         # ── Handle state ────────────────────────────────────────────────

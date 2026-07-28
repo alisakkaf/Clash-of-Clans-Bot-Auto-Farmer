@@ -37,8 +37,8 @@
     "category": "ui_elements",
     "label": "Attack Button",
     "file": "assets\\templates\\ui_elements\\attack_button.png",
-    "width": 186,
-    "height": 57
+    "width": 161,
+    "height": 70
   },
   "end_battle_button": {
     "category": "ui_elements",
@@ -291,5 +291,12 @@
     "file": "assets\\templates\\troops\\super_witch.png",
     "width": 300,
     "height": 300
+  },
+  "searching_indicator": {
+    "category": "ui_elements",
+    "label": "Searching Indicator",
+    "file": "assets\\templates\\ui_elements\\searching_indicator.png",
+    "width": 291,
+    "height": 225
   }
 }

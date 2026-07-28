@@ -76,11 +76,14 @@ class SmartVisionV2:
         """Bounding rectangle of the deploy boundary.
 
         Stricter than before: the boundary MUST span the majority of the
-        playfield (≥55% width AND ≥55% ui-cutoff height). Anything
-        smaller is treated as a spurious red blob (red roof tile, lava
-        pool, etc.) and rejected so the planner falls back to the proven
-        base-bounding-box deploy line.
+        playfield. Dynamically adapted for tablet and widescreen aspect ratios.
         """
+        try:
+            from core.adb_handler import is_tablet_device
+            is_tab = is_tablet_device()
+        except Exception:
+            is_tab = False
+
         h, w = screenshot.shape[:2]
         ui_cutoff = self._sr.get_ui_cutoff(h)
         roi = screenshot[:ui_cutoff, :]
@@ -89,13 +92,13 @@ class SmartVisionV2:
         if not contours:
             return None
         contours = sorted(contours, key=cv2.contourArea, reverse=True)
-        min_w = int(w * 0.55)
-        min_h = int(ui_cutoff * 0.55)
+        min_w = int(w * (0.45 if is_tab else 0.55))
+        min_h = int(ui_cutoff * (0.45 if is_tab else 0.55))
         for c in contours:
             x, y, bw, bh = cv2.boundingRect(c)
             if bw < min_w or bh < min_h:
                 continue
-            if bw > w * 0.97 and bh > ui_cutoff * 0.97:
+            if bw > w * 0.98 and bh > ui_cutoff * 0.98:
                 continue  # full-screen match → noise
             return x, y, bw, bh
         return None
@@ -149,19 +152,13 @@ class SmartVisionV2:
             mid = line[len(line) // 2] if line else (w // 2, ui_cutoff // 2)
             return line, "auto", mid
 
-        # HUD-safe clamps — keep deploy points away from the top battle
-        # banner (timer / surrender) and the bottom troop tray. Without
-        # these floors the line top can land at y≈30 which CoC treats as
-        # an HUD tap rather than a deploy.
-        y_top_min = max(margin, 110)
-        y_bot_max = max(margin, ui_cutoff - 80)
-        x_lo = max(margin, 60)
-        x_hi = min(w - margin, w - 60)
+        # Dynamic aspect-ratio responsive clamps
+        y_top_min = max(margin, int(h * 0.08))
+        y_bot_max = max(margin, ui_cutoff - int(h * 0.06))
+        x_lo = max(margin, int(w * 0.04))
+        x_hi = min(w - margin, w - int(w * 0.04))
 
-        # Stand-off: the deploy line MUST sit far enough outside the red
-        # zone that tap jitter (±15 px) + dashed-line detector slop
-        # (~±20 px) cannot push points back inside the no-deploy area.
-        stand_off = 80
+        stand_off = max(60, int(w * 0.04))
 
         if side == "left":
             x = max(margin, rx - max(stand_off, margins["left"] // 2))

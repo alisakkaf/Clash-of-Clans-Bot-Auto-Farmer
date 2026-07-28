@@ -3,12 +3,12 @@
   "min_elixir": 400000,
   "min_dark_elixir": 4000,
   "auto_retreat_enabled": false,
-  "retreat_heroes_dead": false,
+  "retreat_heroes_dead": true,
   "retreat_gold": 500000,
   "retreat_elixir": 520000,
   "retreat_dark_elixir": 5000,
   "retreat_time": 0,
-  "deploy_timer_enabled": true,
+  "deploy_timer_enabled": false,
   "deploy_timer_seconds": 100,
   "hv_match_mode": "normal",
   "attack_strategy": "smart_target",
@@ -19,8 +19,6 @@
   ],
   "selected_heroes": [
     "grand_warden",
-    "archer_queen",
-    "barbarian_king",
     "royal_champion"
   ],
   "selected_spells": [

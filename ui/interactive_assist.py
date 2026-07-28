@@ -173,12 +173,13 @@ class InteractiveAssistDialog(QDialog):
       • ("none", None) if cancelled
     """
 
-    def __init__(self, screenshot: np.ndarray, parent=None):
+    def __init__(self, screenshot: np.ndarray, parent=None, reason: str = ""):
         super().__init__(parent)
         self.setWindowTitle("⚠ Bot Needs Help — Interactive Assist")
         self.setMinimumSize(900, 600)
         self.setModal(True)
         self._screenshot = screenshot
+        self._reason = reason
         self._result_action = AssistAction.NONE
         self._result_data = None
         self._crop: np.ndarray | None = None
@@ -192,8 +193,11 @@ class InteractiveAssistDialog(QDialog):
         layout = QVBoxLayout(self)
 
         # Warning header
-        hdr = QLabel("⚠  The bot is stuck or on an unknown screen.")
-        hdr.setFont(QFont("Segoe UI", 14, QFont.Bold))
+        hdr_text = "⚠  The bot is stuck or on an unknown screen."
+        if self._reason:
+            hdr_text += f"\n🔍 Looking for: {self._reason}"
+        hdr = QLabel(hdr_text)
+        hdr.setFont(QFont("Segoe UI", 13, QFont.Bold))
         hdr.setStyleSheet("color: #e94560; padding: 8px;")
         hdr.setAlignment(Qt.AlignCenter)
         layout.addWidget(hdr)

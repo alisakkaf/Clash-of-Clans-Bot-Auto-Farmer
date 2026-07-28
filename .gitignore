@@ -1,5 +1,29 @@
+# Temporary & Backup directories
 .backup/
 .windsurf/
-github_upload_instructions.md
+.vscode/
+.idea/
+*.bak
+*.tmp
+*.temp
+
+# Archives & Compressed files
+*.rar
+*.zip
+*.7z
+*.tar.gz
+
+# Python cache & bytecode
 __pycache__/
+*.pyc
+*.pyo
+*.pyd
+.venv/
+venv/
+env/
+.pytest_cache/
+
+# Local runtime logs & profile overrides
 profiles/settings.json
+assets/logs/
+github_upload_instructions.md

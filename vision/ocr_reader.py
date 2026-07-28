@@ -39,15 +39,31 @@ TIMER_X_END   = 0.60
 LOOT_LEFT_CROP = 0.35
 
 _reader = None
+_gpu_supported: bool | None = None
 
 
 def _get_reader():
-    global _reader
+    global _reader, _gpu_supported
     if _reader is None:
         log.info("Initializing EasyOCR reader…")
-        import easyocr
-        _reader = easyocr.Reader(["en"], gpu=True, verbose=False)
-        log.info("EasyOCR reader ready.")
+        try:
+            import easyocr
+            if _gpu_supported is None or _gpu_supported is True:
+                try:
+                    _reader = easyocr.Reader(["en"], gpu=True, verbose=False)
+                    _gpu_supported = True
+                    log.info("EasyOCR reader initialized in GPU mode.")
+                except Exception as gpu_exc:
+                    log.warning("EasyOCR GPU mode failed (%s) — falling back to CPU mode.", gpu_exc)
+                    _gpu_supported = False
+                    _reader = easyocr.Reader(["en"], gpu=False, verbose=False)
+                    log.info("EasyOCR reader initialized in CPU mode.")
+            else:
+                _reader = easyocr.Reader(["en"], gpu=False, verbose=False)
+                log.info("EasyOCR reader initialized in CPU mode.")
+        except Exception as exc:
+            log.error("Failed to initialize EasyOCR reader: %s", exc)
+            _reader = None
     return _reader
 
 
@@ -60,7 +76,6 @@ class OCRReader:
     """
 
     def __init__(self, *_args, **_kwargs) -> None:
-        # Backward-compat: accepts (screen_reader=None) but ignores it.
         self._last_loot_time: float = 0.0
         self._last_loot: dict[str, int] = {"gold": 0, "elixir": 0, "dark_elixir": 0}
         self._last_timer_time: float = 0.0
@@ -74,26 +89,58 @@ class OCRReader:
     # ═══════════════════════════════════════════════════════════════════
 
     @staticmethod
+    def _get_adaptive_loot_roi() -> tuple[float, float, float, float]:
+        try:
+            from core.adb_handler import is_tablet_device
+            if is_tablet_device():
+                return 0.03, 0.28, 0.00, 0.25
+        except Exception:
+            pass
+        return LOOT_Y_START, LOOT_Y_END, LOOT_X_START, LOOT_X_END
+
+    @staticmethod
+    def _get_adaptive_timer_roi() -> tuple[float, float, float, float]:
+        try:
+            from core.adb_handler import is_tablet_device
+            if is_tablet_device():
+                return 0.00, 0.14, 0.38, 0.62
+        except Exception:
+            pass
+        return TIMER_Y_START, TIMER_Y_END, TIMER_X_START, TIMER_X_END
+
+    @staticmethod
     def _proportional_crop(
         screenshot: np.ndarray,
         y_start: float, y_end: float,
         x_start: float, x_end: float,
     ) -> np.ndarray:
-        h, w = screenshot.shape[:2]
-        y1 = max(0, int(h * y_start))
-        y2 = min(h, int(h * y_end))
-        x1 = max(0, int(w * x_start))
-        x2 = min(w, int(w * x_end))
-        return screenshot[y1:y2, x1:x2]
+        try:
+            h, w = screenshot.shape[:2]
+            y1 = max(0, int(h * y_start))
+            y2 = min(h, int(h * y_end))
+            x1 = max(0, int(w * x_start))
+            x2 = min(w, int(w * x_end))
+            if y2 <= y1 or x2 <= x1:
+                return screenshot
+            return screenshot[y1:y2, x1:x2]
+        except Exception as exc:
+            log.warning("_proportional_crop error: %s", exc)
+            return screenshot
 
     @staticmethod
     def _preprocess(image: np.ndarray) -> np.ndarray:
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        scaled = cv2.resize(gray, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
-        _, binary = cv2.threshold(scaled, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
-        if np.count_nonzero(binary) / binary.size < 0.5:
-            binary = cv2.bitwise_not(binary)
-        return binary
+        try:
+            if image is None or image.size == 0:
+                return np.zeros((10, 10), dtype=np.uint8)
+            gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+            scaled = cv2.resize(gray, None, fx=3, fy=3, interpolation=cv2.INTER_CUBIC)
+            _, binary = cv2.threshold(scaled, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+            if binary.size > 0 and np.count_nonzero(binary) / float(binary.size) < 0.5:
+                binary = cv2.bitwise_not(binary)
+            return binary
+        except Exception as exc:
+            log.warning("_preprocess error: %s", exc)
+            return np.zeros((10, 10), dtype=np.uint8)
 
     # ═══════════════════════════════════════════════════════════════════
     #  EASYOCR
@@ -102,7 +149,11 @@ class OCRReader:
     @staticmethod
     def _run_ocr(image: np.ndarray) -> str:
         try:
+            if image is None or image.size == 0:
+                return ""
             reader = _get_reader()
+            if reader is None:
+                return ""
             results = reader.readtext(image, detail=0, paragraph=True)
             return " ".join(results).strip()
         except Exception as exc:
@@ -114,14 +165,17 @@ class OCRReader:
     # ═══════════════════════════════════════════════════════════════════
 
     def read_loot(self, screenshot: np.ndarray) -> dict[str, int]:
-        # Throttle: reuse cached value if last call was too recent.
         now = time.time()
         if now - self._last_loot_time < self._throttle_window():
             return dict(self._last_loot)
 
+        y1, y2, x1, x2 = self._get_adaptive_loot_roi()
         loot_crop = self._proportional_crop(
-            screenshot, LOOT_Y_START, LOOT_Y_END, LOOT_X_START, LOOT_X_END,
+            screenshot, y1, y2, x1, x2,
         )
+        if loot_crop.size == 0:
+            return dict(self._last_loot)
+
         h, w = loot_crop.shape[:2]
         strip_h = h // 3
 
@@ -133,6 +187,9 @@ class OCRReader:
 
         result: dict[str, int] = {}
         for resource, strip in raw_strips.items():
+            if strip.size == 0:
+                result[resource] = 0
+                continue
             sw = strip.shape[1]
             numbers_only = strip[:, int(sw * LOOT_LEFT_CROP):]
             processed = self._preprocess(numbers_only)
@@ -160,8 +217,9 @@ class OCRReader:
         if now - self._last_timer_time < self._throttle_window():
             return self._last_timer
 
+        ty1, ty2, tx1, tx2 = self._get_adaptive_timer_roi()
         timer_crop = self._proportional_crop(
-            screenshot, TIMER_Y_START, TIMER_Y_END, TIMER_X_START, TIMER_X_END,
+            screenshot, ty1, ty2, tx1, tx2,
         )
         processed = self._preprocess(timer_crop)
         raw = self._run_ocr(processed)
