@@ -173,6 +173,12 @@ pip install -r requirements.txt
 .\2adb.exe devices
 ```
 
+
+---
+
+<!-- DONATE_SECTION:START -->
+<!-- DONATE_SECTION:END -->
+
 ---
 
 ## 📜 License
