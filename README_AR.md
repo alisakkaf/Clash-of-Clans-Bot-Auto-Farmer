@@ -95,6 +95,13 @@ pip install -r requirements.txt
 
 ---
 
+---
+
+<!-- DONATE_SECTION:START -->
+<!-- DONATE_SECTION:END -->
+
+---
+
 ## 📜 التراخيص
 
 هذا المشروع مرخص بموجب **رخصة MIT** - راجع ملف [LICENSE](file:///LICENSE) لمعرفة التفاصيل.
